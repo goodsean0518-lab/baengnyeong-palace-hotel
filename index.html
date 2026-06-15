@@ -77,8 +77,33 @@
   /* ───────── Reveal animation ───────── */
   .reveal { opacity: 0; transform: translateY(34px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
   .reveal.in { opacity: 1; transform: none; }
+
+  /* 스태거 그룹 — 자식 요소가 순차적으로 등장 */
+  .reveal-group > * { opacity: 0; transform: translateY(26px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+  .reveal-group.in > * { opacity: 1; transform: none; }
+  .reveal-group.in > *:nth-child(2) { transition-delay: 0.12s; }
+  .reveal-group.in > *:nth-child(3) { transition-delay: 0.24s; }
+  .reveal-group.in > *:nth-child(4) { transition-delay: 0.36s; }
+
+  /* 그리드 카드 순차 등장 */
+  .rooms-grid .reveal:nth-child(2), .bento .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .rooms-grid .reveal:nth-child(3), .bento .reveal:nth-child(3) { transition-delay: 0.2s; }
+  .bento .reveal:nth-child(4) { transition-delay: 0.3s; }
+  .bento .reveal:nth-child(5) { transition-delay: 0.4s; }
+  .bento .reveal:nth-child(6) { transition-delay: 0.5s; }
+
+  /* 히어로 진입 애니메이션 (로드 시 줄별 등장) */
+  .hero h1 .line { display: block; }
+  .hero .eyebrow, .hero h1 .line, .hero p.sub { opacity: 0; transform: translateY(30px); }
+  body.loaded .hero .eyebrow { animation: heroUp 0.9s var(--ease) 0.2s forwards; }
+  body.loaded .hero h1 .line:nth-child(1) { animation: heroUp 1s var(--ease) 0.35s forwards; }
+  body.loaded .hero h1 .line:nth-child(2) { animation: heroUp 1s var(--ease) 0.5s forwards; }
+  body.loaded .hero p.sub { animation: heroUp 0.9s var(--ease) 0.78s forwards; }
+  @keyframes heroUp { to { opacity: 1; transform: none; } }
+
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
+    .reveal-group > *, .hero .eyebrow, .hero h1 .line, .hero p.sub { opacity: 1 !important; transform: none !important; animation: none !important; }
     html { scroll-behavior: auto; }
   }
 
@@ -335,7 +360,7 @@
   </div>
   <div class="hero-inner">
     <span class="eyebrow">Baengnyeongdo Island · West Sea of Korea</span>
-    <h1>서해 끝,<br>바다를 품은 하룻밤</h1>
+    <h1><span class="line">서해 끝,</span><span class="line">바다를 품은 하룻밤</span></h1>
     <p class="sub">파도 소리로 깨어나는 아침. 백령도에서 가장 편안한 휴식, 팰리스 호텔에서 시작됩니다.</p>
   </div>
   <div class="scroll-cue">SCROLL</div>
@@ -371,7 +396,7 @@
 <!-- ───────── ROOMS ───────── -->
 <section class="sec" id="rooms">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal-group">
       <span class="eyebrow">Rooms</span>
       <h2>편안함을 위해 준비된 객실</h2>
       <p>인원과 일정에 맞춰 선택하세요. 모든 객실에 무료 와이파이가 제공됩니다.</p>
@@ -411,7 +436,7 @@
 <!-- ───────── GALLERY ───────── -->
 <section class="sec gallery" id="gallery">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal-group">
       <span class="eyebrow">Gallery</span>
       <h2>백령도의 풍경</h2>
       <p>객실 창 너머로 펼쳐지는 서해, 그리고 섬이 품은 자연.</p>
@@ -432,7 +457,7 @@
 <!-- ───────── ACCESS ───────── -->
 <section class="sec" id="access" style="background:var(--sand-100);">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal-group">
       <span class="eyebrow">Access</span>
       <h2>오시는 길</h2>
       <p>백령도는 인천항 연안여객터미널에서 고려고속훼리 여객선으로 이동합니다. (약 3시간 40분~4시간)</p>
@@ -570,11 +595,42 @@
     loop();
   })();
 
-  // Reveal on scroll
+  // Reveal on scroll (단일 + 스태거 그룹)
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.16 });
-  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  document.querySelectorAll('.reveal, .reveal-group').forEach(function (el) { io.observe(el); });
+
+  // 히어로 진입 애니메이션 트리거
+  requestAnimationFrame(function () { document.body.classList.add('loaded'); });
+
+  // 통계 숫자 카운트업 (뷰 진입 시 0→목표)
+  (function () {
+    var statsEl = document.querySelector('.stats');
+    if (!statsEl) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var sObs = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        sObs.unobserve(e.target);
+        e.target.querySelectorAll('.num').forEach(function (n) {
+          var m = n.textContent.match(/^(\d+)(.*)$/);
+          if (!m) return;
+          var target = parseInt(m[1], 10), suffix = m[2], dur = 1100, start = null;
+          n.textContent = '0' + suffix;
+          function step(ts) {
+            if (!start) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var val = Math.round(target * (1 - Math.pow(1 - p, 3)));
+            n.textContent = val + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        });
+      });
+    }, { threshold: 0.4 });
+    sObs.observe(statsEl);
+  })();
 </script>
 </body>
 </html>
