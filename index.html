@@ -252,6 +252,14 @@
   .room-price .won { font-family: var(--serif); font-size: 1.3rem; color: var(--ocean-700); font-weight: 700; }
   @media (max-width: 860px) { .rooms-grid { grid-template-columns: 1fr; max-width: 460px; margin-inline: auto; } }
 
+  /* ───────── 가볼만한 곳 ───────── */
+  .places-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; }
+  .place-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; margin-top: 0.6rem; }
+  .place-note { margin-top: 1.5rem; font-size: 0.86rem; color: var(--muted); }
+  .places-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .places-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
+  .places-grid .reveal:nth-child(4) { transition-delay: 0.3s; }
+
   /* ───────── Gallery bento ───────── */
   .gallery { background: var(--ocean-900); color: var(--sand-50); }
   .gallery .sec-head h2 { color: #fff; }
@@ -414,6 +422,7 @@
       <a href="#intro">소개</a>
       <a href="#rooms">객실</a>
       <a href="#gallery">갤러리</a>
+      <a href="#around">가볼만한 곳</a>
       <a href="#access">오시는 길</a>
     </div>
     <!-- TODO: 네이버예약 실제 URL로 교체 -->
@@ -428,6 +437,7 @@
   <a href="#intro">소개</a>
   <a href="#rooms">객실</a>
   <a href="#gallery">갤러리</a>
+  <a href="#around">가볼만한 곳</a>
   <a href="#access">오시는 길</a>
   <a class="btn-book" href="https://booking.naver.com/" target="_blank" rel="noopener">네이버 예약</a>
 </nav>
@@ -541,6 +551,56 @@
       <figure class="wide reveal"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/KOCIS_Korea_Island_Baengnyeongdo02_%289267793798%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo02_%289267793798%29.jpg" alt="백령도 해안 절벽과 일몰" /></figure>
       <figure class="reveal"><img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg" alt="백령도 기암 노을 실루엣" /></figure>
     </div>
+  </div>
+</section>
+
+<!-- ───────── 가볼만한 곳 ───────── -->
+<section class="sec" id="around">
+  <div class="wrap">
+    <div class="sec-head reveal-group">
+      <span class="eyebrow">Around</span>
+      <h2>백령도 가볼만한 곳</h2>
+      <p>호텔에서 멀지 않은 거리, 백령도가 품은 천연기념물과 명승을 만나보세요.</p>
+    </div>
+    <div class="places-grid">
+      <article class="room-card reveal">
+        <div class="ph"><span class="tag">명승</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg/1280px-Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg" alt="백령도 두무진 기암절벽" /></div>
+        <div class="room-body">
+          <h3>두무진</h3>
+          <div class="room-meta">서해의 해금강 · 해안 기암절벽</div>
+          <p class="place-desc">기암괴석이 병풍처럼 늘어선 해안 절벽. 유람선을 타고 바다에서 바라보는 풍경이 압권인 백령도 대표 명소입니다.</p>
+        </div>
+      </article>
+      <article class="room-card reveal">
+        <div class="ph"><span class="tag">천연기념물</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg/1280px-Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg" alt="백령도 콩돌해안" /></div>
+        <div class="room-body">
+          <h3>콩돌해안</h3>
+          <div class="room-meta">남포리 · 둥근 자갈 해변</div>
+          <p class="place-desc">콩알처럼 둥근 자갈이 끝없이 깔린 해변. 파도가 자갈을 굴리며 내는 청아한 소리가 매력입니다.</p>
+        </div>
+      </article>
+      <article class="room-card reveal">
+        <div class="ph"><span class="tag">천연기념물</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg/1280px-Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg" alt="백령도 사곶해변 천연비행장" /></div>
+        <div class="room-body">
+          <h3>사곶해변</h3>
+          <div class="room-meta">천연 비행장 · 규조토 모래사장</div>
+          <p class="place-desc">모래가 단단해 과거 비행기도 이착륙했던 천연 비행장. 세계적으로도 드문 규조토 해변입니다.</p>
+        </div>
+      </article>
+      <article class="room-card reveal">
+        <div class="ph"><span class="tag">설화 · 전망</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg" alt="백령도 낙조와 해안 전망" /></div>
+        <div class="room-body">
+          <h3>심청각</h3>
+          <div class="room-meta">인당수 조망 · 서해 낙조</div>
+          <p class="place-desc">심청전 설화의 무대 인당수를 굽어보는 전각. 맑은 날엔 북녘 장산곶까지 한눈에 들어옵니다.</p>
+        </div>
+      </article>
+    </div>
+    <p class="place-note">이 외에도 점박이물범 서식지, 중화동교회(1896), 천안함 위령탑 등 자연·역사 명소가 가까이 있습니다. 자세한 코스·유람선 운항은 호텔에 문의해 주세요.</p>
   </div>
 </section>
 
