@@ -259,6 +259,26 @@
   .places-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
   .places-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
   .places-grid .reveal:nth-child(4) { transition-delay: 0.3s; }
+  .place-more { display: inline-block; margin-top: 0.7rem; font-size: 0.8rem; font-weight: 600; color: var(--gold-deep); transition: transform 0.25s var(--ease); }
+  .place-card-btn:hover .place-more { transform: translateX(4px); }
+
+  /* 명소 상세 모달 */
+  #placeModal { position: fixed; inset: 0; z-index: 160; background: rgba(8,20,28,0.6); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 5vw 4vw; opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease), visibility 0.35s; }
+  #placeModal.open { opacity: 1; visibility: visible; }
+  .pm-panel { background: var(--sand-50); width: min(680px, 94vw); max-height: 88vh; overflow: auto; border-radius: 12px; box-shadow: 0 40px 90px -30px rgba(0,0,0,0.6); transform: translateY(20px) scale(0.98); transition: transform 0.4s var(--ease); }
+  #placeModal.open .pm-panel { transform: none; }
+  .pm-img { position: relative; aspect-ratio: 16/9; }
+  .pm-img .tag { position: absolute; top: 1rem; left: 1rem; background: rgba(12,34,48,0.78); color: #fff; font-size: 0.74rem; padding: 0.3rem 0.8rem; border-radius: 999px; letter-spacing: 0.04em; }
+  .pm-close { position: absolute; top: 0.8rem; right: 0.8rem; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,0.45); color: #fff; font-size: 1.3rem; cursor: pointer; transition: transform 0.25s var(--ease), background 0.2s; }
+  .pm-close:hover { background: rgba(0,0,0,0.7); transform: rotate(90deg); }
+  .pm-body { padding: clamp(1.4rem, 3vw, 2.2rem); }
+  .pm-body h3 { font-family: var(--serif); font-size: 1.8rem; margin-bottom: 0.3rem; }
+  .pm-meta { color: var(--gold-deep); font-size: 0.9rem; font-weight: 600; margin-bottom: 1.1rem; }
+  .pm-facts { list-style: none; margin: 0 0 1.2rem; display: grid; gap: 0.5rem; }
+  .pm-facts li { display: grid; grid-template-columns: 88px 1fr; gap: 0.8rem; font-size: 0.9rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
+  .pm-facts li b { color: var(--ocean-600); font-weight: 700; }
+  .pm-desc p { font-size: 0.96rem; color: var(--ink); line-height: 1.8; margin-bottom: 0.7rem; }
+  .pm-desc p:last-child { margin-bottom: 0; }
 
   /* ───────── Gallery bento ───────── */
   .gallery { background: var(--ocean-900); color: var(--sand-50); }
@@ -338,14 +358,6 @@
   .has-cursor, .has-cursor a, .has-cursor button, .has-cursor .bento figure { cursor: none; }
   @media (hover: none), (pointer: coarse) { .cur-dot, .cur-ring { display: none; } }
 
-  /* 흐르는 마퀴 띠 */
-  .marquee { background: var(--ocean-900); color: var(--sand-50); padding: 1.1rem 0; overflow: hidden; white-space: nowrap; border-block: 1px solid rgba(255,255,255,0.08); }
-  .marquee .track { display: inline-flex; gap: 2.5rem; animation: marq 26s linear infinite; will-change: transform; }
-  .marquee:hover .track { animation-play-state: paused; }
-  .marquee span { font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.7rem); letter-spacing: 0.02em; opacity: 0.9; }
-  .marquee span::after { content: "✦"; margin-left: 2.5rem; color: var(--gold); }
-  @keyframes marq { to { transform: translateX(-50%); } }
-
   /* 갤러리 호버 캡션 + 확대 아이콘 */
   .bento figure { cursor: pointer; }
   .bento figure figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.5rem 1rem 0.9rem; color: #fff; font-size: 0.9rem; font-weight: 600;
@@ -379,7 +391,6 @@
   .reveal-group.in h2 .w { opacity: 1; transform: none; }
 
   @media (prefers-reduced-motion: reduce) {
-    .marquee .track { animation: none; }
     #loader .ld-brand span { animation: none; transform: none; }
     #loader .ld-bar i { animation: none; }
     .sec-head h2 .w { opacity: 1 !important; transform: none !important; }
@@ -485,14 +496,6 @@
   </div>
 </section>
 
-<!-- ───────── 마퀴 띠 ───────── -->
-<div class="marquee" aria-hidden="true">
-  <div class="track">
-    <span>두무진 기암절벽</span><span>콩돌해안</span><span>사곶 천연비행장</span><span>심청각</span><span>서해 최북단</span><span>백령도 팰리스 호텔</span>
-    <span>두무진 기암절벽</span><span>콩돌해안</span><span>사곶 천연비행장</span><span>심청각</span><span>서해 최북단</span><span>백령도 팰리스 호텔</span>
-  </div>
-</div>
-
 <!-- ───────── ROOMS ───────── -->
 <section class="sec" id="rooms">
   <div class="wrap">
@@ -563,44 +566,119 @@
       <p>호텔에서 멀지 않은 거리, 백령도가 품은 천연기념물과 명승을 만나보세요.</p>
     </div>
     <div class="places-grid">
-      <article class="room-card reveal">
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="두무진" data-tag="명승 제8호"
+        data-meta="위치 · 백령도 북서쪽 두무진항"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg/1280px-Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg"
+        data-facts="위치::백령도 북서쪽 두무진항|지정::명승 제8호|추천::유람선 해상 관람·일몰"
+        data-desc="오랜 세월 침식으로 빚어진 규암 해안 절벽 군락입니다. 코끼리바위·형제바위·선대바위 등 기암괴석이 병풍처럼 이어져 '서해의 해금강'으로 불립니다.||두무진항에서 유람선을 타면 바다 위에서 절벽을 가까이 감상할 수 있고, 일몰 명소로도 손꼽힙니다.">
         <div class="ph"><span class="tag">명승</span>
           <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg/1280px-Encykorea-%EC%98%B9%EC%A7%84_%EB%B0%B1%EB%A0%B9%EB%8F%84_%EB%91%90%EB%AC%B4%EC%A7%84_%EA%B8%B0%EC%95%94.jpg" alt="백령도 두무진 기암절벽" /></div>
         <div class="room-body">
           <h3>두무진</h3>
           <div class="room-meta">서해의 해금강 · 해안 기암절벽</div>
-          <p class="place-desc">기암괴석이 병풍처럼 늘어선 해안 절벽. 유람선을 타고 바다에서 바라보는 풍경이 압권인 백령도 대표 명소입니다.</p>
+          <p class="place-desc">기암괴석이 병풍처럼 늘어선 해안 절벽. 유람선에서 바라보는 풍경이 압권인 백령도 대표 명소.</p>
+          <span class="place-more">자세히 보기 →</span>
         </div>
       </article>
-      <article class="room-card reveal">
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="콩돌해안" data-tag="천연기념물 제392호"
+        data-meta="위치 · 남포리"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg/1280px-Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg"
+        data-facts="위치::남포리|지정::천연기념물 제392호|팁::맨발 산책·자갈 채취 금지"
+        data-desc="백령도의 규암이 부서지고 파도에 닳아 만들어진 콩알 크기의 둥근 자갈이 해안을 가득 메웁니다.||흰색·회색·갈색 등 색이 다양하고, 파도가 밀려갈 때 자갈이 구르며 내는 '차르르' 소리가 특히 유명합니다.">
         <div class="ph"><span class="tag">천연기념물</span>
           <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg/1280px-Kongdol_Pebble_Beach_in_Nampo-ri%2C_Baengnyeongdo_Island.jpg" alt="백령도 콩돌해안" /></div>
         <div class="room-body">
           <h3>콩돌해안</h3>
           <div class="room-meta">남포리 · 둥근 자갈 해변</div>
-          <p class="place-desc">콩알처럼 둥근 자갈이 끝없이 깔린 해변. 파도가 자갈을 굴리며 내는 청아한 소리가 매력입니다.</p>
+          <p class="place-desc">콩알처럼 둥근 자갈이 끝없이 깔린 해변. 파도가 자갈을 굴리는 청아한 소리가 매력.</p>
+          <span class="place-more">자세히 보기 →</span>
         </div>
       </article>
-      <article class="room-card reveal">
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="사곶해변" data-tag="천연기념물 제391호"
+        data-meta="위치 · 진촌리"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg/1280px-Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg"
+        data-facts="위치::진촌리|지정::천연기념물 제391호|특징::천연 비행장·규조토"
+        data-desc="모래가 매우 단단해 과거 비행기가 이착륙했을 만큼 견고한 천연 비행장입니다.||규조토로 이루어진 사빈으로 이탈리아 나폴리 해변과 함께 세계적으로 드문 지형으로 꼽히며, 썰물 때면 광활한 백사장이 드러납니다.">
         <div class="ph"><span class="tag">천연기념물</span>
           <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg/1280px-Sand_Beach_at_Sagot_Cape_on_Baengnyeongdo_Island.jpg" alt="백령도 사곶해변 천연비행장" /></div>
         <div class="room-body">
           <h3>사곶해변</h3>
           <div class="room-meta">천연 비행장 · 규조토 모래사장</div>
-          <p class="place-desc">모래가 단단해 과거 비행기도 이착륙했던 천연 비행장. 세계적으로도 드문 규조토 해변입니다.</p>
+          <p class="place-desc">단단해 과거 비행기도 이착륙했던 천연 비행장. 세계적으로 드문 규조토 해변.</p>
+          <span class="place-more">자세히 보기 →</span>
         </div>
       </article>
-      <article class="room-card reveal">
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="심청각" data-tag="설화 · 전망"
+        data-meta="위치 · 진촌리 언덕"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg"
+        data-facts="위치::진촌리 언덕|성격::심청전 기념 전각|전망::인당수·연봉바위·장산곶"
+        data-desc="효녀 심청이 몸을 던졌다는 인당수가 백령도 인근이라는 전설을 기리는 전각입니다. 심청 동상과 관련 자료가 전시되어 있습니다.||전망대에서 인당수와 연봉바위, 맑은 날엔 북녘 장산곶까지 바라볼 수 있습니다.||※ 카드 사진은 분위기용 백령도 낙조 전경이며 실제 건물 사진이 아닙니다(실사 확보 시 교체 예정).">
         <div class="ph"><span class="tag">설화 · 전망</span>
-          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg" alt="백령도 낙조와 해안 전망" /></div>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo17_%289267789946%29.jpg" alt="백령도 낙조와 해안 전망 (분위기용)" /></div>
         <div class="room-body">
           <h3>심청각</h3>
           <div class="room-meta">인당수 조망 · 서해 낙조</div>
-          <p class="place-desc">심청전 설화의 무대 인당수를 굽어보는 전각. 맑은 날엔 북녘 장산곶까지 한눈에 들어옵니다.</p>
+          <p class="place-desc">심청전 설화의 무대 인당수를 굽어보는 전각. 맑은 날 북녘 장산곶까지 조망.</p>
+          <span class="place-more">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="점박이물범 서식지" data-tag="천연기념물 · 보호종"
+        data-meta="위치 · 하늬바다 물범바위 일대"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/KOCIS_Korea_Island_Baengnyeongdo09_%289267792026%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo09_%289267792026%29.jpg"
+        data-facts="위치::하늬바다 물범바위 일대|지정::점박이물범(천연기념물 제331호)|시기::봄~가을"
+        data-desc="백령도는 멸종위기·천연기념물인 점박이물범의 국내 최대 서식지입니다. 봄부터 가을까지 물범바위에 올라 휴식하는 모습을 관찰할 수 있습니다.||망원경을 챙기고, 보호종인 만큼 충분한 거리를 두고 관찰해 주세요.||※ 카드 사진은 분위기용 백령도 해안 풍경입니다.">
+        <div class="ph"><span class="tag">보호종</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/KOCIS_Korea_Island_Baengnyeongdo09_%289267792026%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo09_%289267792026%29.jpg" alt="백령도 해안 풍경 (분위기용)" /></div>
+        <div class="room-body">
+          <h3>점박이물범 서식지</h3>
+          <div class="room-meta">하늬바다 · 국내 최대 서식지</div>
+          <p class="place-desc">천연기념물 점박이물범이 봄~가을 물범바위에서 쉬는 모습을 볼 수 있는 곳.</p>
+          <span class="place-more">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="중화동교회" data-tag="역사 · 1896"
+        data-meta="설립 · 1896년"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/KOCIS_Korea_Island_Baengnyeongdo22_%289267787564%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo22_%289267787564%29.jpg"
+        data-facts="설립::1896년|의미::한국 초기 장로교회 중 하나|인접::백령기독교역사관"
+        data-desc="1896년에 세워진 백령도 기독교 전래의 상징으로, 한국에서 가장 오래된 교회 중 하나로 꼽힙니다.||곁에는 백령기독교역사관이 있어 섬의 근현대 신앙 역사를 함께 둘러볼 수 있습니다.||※ 카드 사진은 분위기용 백령도 마을 풍경입니다.">
+        <div class="ph"><span class="tag">역사</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/KOCIS_Korea_Island_Baengnyeongdo22_%289267787564%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo22_%289267787564%29.jpg" alt="백령도 마을 풍경 (분위기용)" /></div>
+        <div class="room-body">
+          <h3>중화동교회</h3>
+          <div class="room-meta">1896년 · 백령기독교역사관</div>
+          <p class="place-desc">1896년 세워진 한국 초기 장로교회 중 하나. 섬 기독교 역사의 상징.</p>
+          <span class="place-more">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <article class="room-card reveal place-card-btn" role="button" tabindex="0"
+        data-title="천안함 위령탑" data-tag="추모 · 안보"
+        data-meta="위치 · 연화리 언덕"
+        data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg"
+        data-facts="위치::연화리 언덕|성격::천안함 46용사 추모|조망::사건 해역"
+        data-desc="2010년 천안함 사건으로 희생된 46용사를 기리는 추모 공간입니다.||백령도 앞바다(사건 해역)를 바라보는 언덕에 자리해, 안보의 의미를 되새기는 방문지로 많이 찾습니다.||※ 카드 사진은 분위기용 백령도 바다 풍경입니다.">
+        <div class="ph"><span class="tag">추모</span>
+          <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg" alt="백령도 저녁 바다 (분위기용)" /></div>
+        <div class="room-body">
+          <h3>천안함 위령탑</h3>
+          <div class="room-meta">연화리 · 46용사 추모</div>
+          <p class="place-desc">2010년 천안함 46용사를 기리는 추모 공간. 사건 해역을 바라보는 언덕.</p>
+          <span class="place-more">자세히 보기 →</span>
         </div>
       </article>
     </div>
-    <p class="place-note">이 외에도 점박이물범 서식지, 중화동교회(1896), 천안함 위령탑 등 자연·역사 명소가 가까이 있습니다. 자세한 코스·유람선 운항은 호텔에 문의해 주세요.</p>
+    <p class="place-note">각 장소를 클릭하면 세부 정보를 볼 수 있습니다. 일부 사진은 분위기용 백령도 풍경이며, 자세한 코스·유람선 운항은 호텔에 문의해 주세요.</p>
   </div>
 </section>
 
@@ -672,6 +750,19 @@
   <button class="lb-close" aria-label="닫기">×</button>
   <img alt="" />
   <div class="lb-cap"></div>
+</div>
+
+<!-- 명소 상세 모달 -->
+<div id="placeModal" aria-hidden="true">
+  <div class="pm-panel">
+    <div class="pm-img"><img alt="" /><span class="tag"></span><button class="pm-close" aria-label="닫기">×</button></div>
+    <div class="pm-body">
+      <h3></h3>
+      <div class="pm-meta"></div>
+      <ul class="pm-facts"></ul>
+      <div class="pm-desc"></div>
+    </div>
+  </div>
 </div>
 
 <!-- 플로팅 예약 / 맨위로 -->
@@ -881,6 +972,41 @@
       b.addEventListener('mouseleave', function () { b.style.transform = ''; });
     });
   }
+
+  // 명소 상세 모달
+  (function () {
+    var modal = document.getElementById('placeModal');
+    if (!modal) return;
+    var mImg = modal.querySelector('.pm-img img'), mTag = modal.querySelector('.pm-img .tag'),
+        mTitle = modal.querySelector('h3'), mMeta = modal.querySelector('.pm-meta'),
+        mFacts = modal.querySelector('.pm-facts'), mDesc = modal.querySelector('.pm-desc');
+    function open(card) {
+      var d = card.dataset;
+      mImg.src = d.img || ''; mImg.alt = d.title || '';
+      mTag.textContent = d.tag || ''; mTag.style.display = d.tag ? '' : 'none';
+      mTitle.textContent = d.title || ''; mMeta.textContent = d.meta || '';
+      mFacts.innerHTML = '';
+      (d.facts || '').split('|').forEach(function (f) {
+        if (!f) return; var kv = f.split('::');
+        var li = document.createElement('li');
+        var b = document.createElement('b'); b.textContent = kv[0] || '';
+        var s = document.createElement('span'); s.textContent = kv[1] || '';
+        li.appendChild(b); li.appendChild(s); mFacts.appendChild(li);
+      });
+      mDesc.innerHTML = '';
+      (d.desc || '').split('||').forEach(function (t) {
+        if (!t.trim()) return; var p = document.createElement('p'); p.textContent = t.trim(); mDesc.appendChild(p);
+      });
+      modal.classList.add('open'); document.body.style.overflow = 'hidden';
+    }
+    function close() { modal.classList.remove('open'); document.body.style.overflow = ''; }
+    document.querySelectorAll('.place-card-btn').forEach(function (c) {
+      c.addEventListener('click', function () { open(c); });
+      c.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(c); } });
+    });
+    modal.addEventListener('click', function (e) { if (e.target === modal || e.target.classList.contains('pm-close')) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
 </script>
 </body>
 </html>
