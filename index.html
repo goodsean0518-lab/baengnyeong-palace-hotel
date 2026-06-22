@@ -223,7 +223,17 @@
   .sec-head p { color: var(--muted); font-size: 1.05rem; }
 
   /* ───────── Intro split ───────── */
-  .intro { background: var(--sand-100); }
+  .intro { background: var(--sand-100); position: relative; overflow: hidden; }
+  .intro > .wrap { position: relative; z-index: 1; }
+  .intro-wave {
+    position: absolute; inset: -12% -16%; z-index: 0; pointer-events: none;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg") center/cover no-repeat;
+    opacity: 0.2; will-change: transform;
+    transform: translate3d(var(--wx, 0px), 0, 0) scale(var(--wsc, 1.02));
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) { .intro-wave { transform: none; } }
   .intro-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
   .intro-img { aspect-ratio: 4/5; border-radius: 6px; overflow: hidden; position: relative; box-shadow: 0 30px 60px -30px rgba(12,34,48,0.5); }
   .intro-img .badge {
@@ -499,6 +509,7 @@
 
 <!-- ───────── INTRO ───────── -->
 <section class="sec intro" id="intro">
+  <div class="intro-wave" aria-hidden="true"></div>
   <div class="wrap intro-grid">
     <div class="intro-img reveal liquid">
       <!-- 백령도 저녁 바다 (KOCIS/korea.net, CC BY-SA) — "하루의 끝을 조용하게" 카피와 매칭 -->
@@ -1000,6 +1011,25 @@
       b.addEventListener('mouseleave', function () { b.style.transform = ''; });
     });
   }
+
+  // 소개 섹션 물결 배경 — 스크롤에 따라 좌→우 이동 + 확대
+  (function () {
+    var sec = document.getElementById('intro');
+    var wave = document.querySelector('.intro-wave');
+    if (!sec || !wave) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function upd() {
+      var r = sec.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var p = (vh - r.top) / (vh + r.height);
+      p = Math.max(0, Math.min(1, p));
+      wave.style.setProperty('--wx', ((p - 0.5) * 150).toFixed(1) + 'px');
+      wave.style.setProperty('--wsc', (1.02 + p * 0.2).toFixed(3));
+    }
+    upd();
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+  })();
 
   // 명소 상세 모달
   (function () {
