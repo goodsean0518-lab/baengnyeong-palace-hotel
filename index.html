@@ -210,7 +210,7 @@
   }
   .hero p.sub { max-width: 40ch; font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem); opacity: 0.94; }
   .scroll-cue {
-    position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%);
+    position: absolute; left: 50%; bottom: clamp(5rem, 9vw, 7rem); transform: translateX(-50%); z-index: 6;
     font-size: 0.7rem; letter-spacing: 0.3em; color: #fff; opacity: 0.8; text-transform: uppercase;
   }
   .scroll-cue::after { content: ""; display: block; width: 1px; height: 38px; margin: 0.6rem auto 0; background: linear-gradient(#fff, transparent); animation: pulse 2.2s var(--ease) infinite; }
@@ -234,6 +234,11 @@
             mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
   }
   @media (prefers-reduced-motion: reduce) { .intro-wave { transform: none; } }
+
+  /* 섹션 사이 물결 곡선 경계 */
+  .wave-sep { position: absolute; left: 0; right: 0; bottom: -1px; z-index: 4; line-height: 0; pointer-events: none; }
+  .wave-sep svg { display: block; width: 100%; height: clamp(38px, 6vw, 88px); }
+  .wave-sep path { fill: var(--wave-fill, var(--sand-100)); }
   .intro-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
   .intro-img { aspect-ratio: 4/5; border-radius: 6px; overflow: hidden; position: relative; box-shadow: 0 30px 60px -30px rgba(12,34,48,0.5); }
   .intro-img .badge {
@@ -493,6 +498,9 @@
     <p class="sub">파도 소리로 깨어나는 아침. 백령도에서 가장 편안한 휴식, 팰리스 호텔에서 시작됩니다.</p>
   </div>
   <div class="scroll-cue">SCROLL</div>
+  <div class="wave-sep" style="--wave-fill: var(--sand-100)" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,38 C220,92 470,4 720,34 C970,64 1200,98 1440,46 L1440,100 L0,100 Z"></path></svg>
+  </div>
 </section>
 
 <!-- 물결 일렁임 SVG 필터 -->
@@ -532,6 +540,9 @@
         <div><div class="num">24h</div><div class="lbl">전화 예약 응대</div></div>
       </div>
     </div>
+  </div>
+  <div class="wave-sep" style="--wave-fill: var(--sand-50)" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,38 C220,92 470,4 720,34 C970,64 1200,98 1440,46 L1440,100 L0,100 Z"></path></svg>
   </div>
 </section>
 
