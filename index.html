@@ -223,16 +223,15 @@
   .sec-head p { color: var(--muted); font-size: 1.05rem; }
 
   /* ───────── Intro split ───────── */
-  .intro { background: var(--sand-100); position: relative; overflow: hidden; }
+  .intro { background: var(--sand-100); position: relative; overflow: hidden; clip-path: url(#waveClip); margin-top: -64px; }
   .intro > .wrap { position: relative; z-index: 1; }
   .intro-wave {
-    position: absolute; inset: -12% -16%; z-index: 0; pointer-events: none;
+    position: absolute; inset: 0 -16%; z-index: 0; pointer-events: none;
     background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg/1280px-KOCIS_Korea_Island_Baengnyeongdo13_%289267790792%29.jpg") center/cover no-repeat;
-    opacity: 0.2; will-change: transform;
-    transform: translate3d(var(--wx, 0px), 0, 0) scale(var(--wsc, 1.02));
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-            mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+    opacity: 1; will-change: transform;
+    transform: translate3d(var(--wx, 0px), 0, 0) scale(var(--wsc, 1.06));
   }
+  .intro-wave::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250,246,239,0.5), rgba(250,246,239,0.68) 60%, rgba(250,246,239,0.8)); }
   @media (prefers-reduced-motion: reduce) { .intro-wave { transform: none; } }
 
   /* 섹션 사이 물결 곡선 경계 */
@@ -269,7 +268,7 @@
 
   /* ───────── Rooms ───────── */
   /* 객실 섹션 실사 배경 + 스크롤 패럴럭스 */
-  #rooms { position: relative; overflow: hidden; }
+  #rooms { position: relative; overflow: hidden; clip-path: url(#waveClip); margin-top: -64px; }
   #rooms > .wrap { position: relative; z-index: 2; }
   .rooms-bg {
     position: absolute; inset: 0 -14%; z-index: 0; pointer-events: none;
@@ -515,9 +514,6 @@
     <p class="sub">파도 소리로 깨어나는 아침. 백령도에서 가장 편안한 휴식, 팰리스 호텔에서 시작됩니다.</p>
   </div>
   <div class="scroll-cue">SCROLL</div>
-  <div class="wave-sep" style="--wave-fill: var(--sand-100)" aria-hidden="true">
-    <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,38 C220,92 470,4 720,34 C970,64 1200,98 1440,46 L1440,100 L0,100 Z"></path></svg>
-  </div>
 </section>
 
 <!-- 물결 일렁임 SVG 필터 -->
@@ -529,6 +525,9 @@
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" />
     </filter>
+    <clipPath id="waveClip" clipPathUnits="objectBoundingBox">
+      <path d="M0,0.028 C0.17,0.05 0.34,0.004 0.5,0.02 C0.66,0.036 0.83,0.052 1,0.022 L1,1 L0,1 Z" />
+    </clipPath>
   </defs>
 </svg>
 
@@ -563,9 +562,6 @@
 <!-- ───────── ROOMS ───────── -->
 <section class="sec" id="rooms">
   <div class="rooms-bg" aria-hidden="true"></div>
-  <div class="wave-top" aria-hidden="true">
-    <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,0 L1440,0 L1440,42 C1200,92 970,4 720,34 C470,64 220,98 0,46 Z"></path></svg>
-  </div>
   <div class="wrap">
     <div class="sec-head reveal-group">
       <span class="eyebrow">Rooms</span>
