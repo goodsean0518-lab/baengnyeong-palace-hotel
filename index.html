@@ -307,6 +307,76 @@
   .foot-bottom { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.78rem; opacity: 0.6; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
   .demo-note { position: fixed; bottom: 12px; left: 12px; z-index: 99; background: rgba(12,34,48,0.85); color: #fff; font-size: 0.7rem; padding: 0.4rem 0.7rem; border-radius: 6px; letter-spacing: 0.02em; }
 
+  /* ═════════ 추가 인터랙션 (ondo / lapa 참고) ═════════ */
+
+  /* 페이지 로더 */
+  #loader { position: fixed; inset: 0; z-index: 200; background: var(--ocean-900); display: grid; place-items: center; transition: opacity 0.7s var(--ease), visibility 0.7s; }
+  #loader.done { opacity: 0; visibility: hidden; }
+  #loader .ld-brand { font-family: var(--serif); color: #fff; font-size: clamp(1.6rem, 4vw, 2.6rem); letter-spacing: 0.04em; overflow: hidden; }
+  #loader .ld-brand span { display: inline-block; transform: translateY(110%); animation: ldUp 0.9s var(--ease) 0.1s forwards; }
+  #loader .ld-bar { margin: 1.1rem auto 0; width: min(220px, 50vw); height: 2px; background: rgba(255,255,255,0.18); overflow: hidden; border-radius: 2px; }
+  #loader .ld-bar i { display: block; height: 100%; width: 40%; background: var(--gold); animation: ldBar 1.1s var(--ease) infinite; }
+  @keyframes ldUp { to { transform: none; } }
+  @keyframes ldBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
+
+  /* 스크롤 진행 바 */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: linear-gradient(90deg, var(--gold), var(--gold-deep)); z-index: 60; transition: width 0.1s linear; }
+
+  /* 커스텀 커서 */
+  .cur-dot, .cur-ring { position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 120; mix-blend-mode: difference; will-change: transform; }
+  .cur-dot { width: 7px; height: 7px; background: #fff; margin: -3.5px 0 0 -3.5px; }
+  .cur-ring { width: 38px; height: 38px; border: 1.5px solid rgba(255,255,255,0.7); margin: -19px 0 0 -19px; transition: transform 0.18s var(--ease), border-color 0.2s, background 0.2s; }
+  .cur-ring.hot { transform: scale(1.7); background: rgba(255,255,255,0.12); border-color: #fff; }
+  .has-cursor, .has-cursor a, .has-cursor button, .has-cursor .bento figure { cursor: none; }
+  @media (hover: none), (pointer: coarse) { .cur-dot, .cur-ring { display: none; } }
+
+  /* 흐르는 마퀴 띠 */
+  .marquee { background: var(--ocean-900); color: var(--sand-50); padding: 1.1rem 0; overflow: hidden; white-space: nowrap; border-block: 1px solid rgba(255,255,255,0.08); }
+  .marquee .track { display: inline-flex; gap: 2.5rem; animation: marq 26s linear infinite; will-change: transform; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .marquee span { font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.7rem); letter-spacing: 0.02em; opacity: 0.9; }
+  .marquee span::after { content: "✦"; margin-left: 2.5rem; color: var(--gold); }
+  @keyframes marq { to { transform: translateX(-50%); } }
+
+  /* 갤러리 호버 캡션 + 확대 아이콘 */
+  .bento figure { cursor: pointer; }
+  .bento figure figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.5rem 1rem 0.9rem; color: #fff; font-size: 0.9rem; font-weight: 600;
+    background: linear-gradient(transparent, rgba(12,34,48,0.78)); transform: translateY(8px); opacity: 0; transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); }
+  .bento figure:hover figcaption { opacity: 1; transform: none; }
+  .bento figure::before { content: "⤢"; position: absolute; top: 0.7rem; right: 0.85rem; z-index: 2; color: #fff; font-size: 1.05rem; opacity: 0; transform: scale(0.6); transition: 0.3s var(--ease); text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+  .bento figure:hover::before { opacity: 0.95; transform: none; }
+
+  /* 라이트박스 */
+  #lightbox { position: fixed; inset: 0; z-index: 150; background: rgba(8,20,28,0.92); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 4vw;
+    opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease), visibility 0.35s; }
+  #lightbox.open { opacity: 1; visibility: visible; }
+  #lightbox img { max-width: 92vw; max-height: 84vh; width: auto; height: auto; border-radius: 8px; box-shadow: 0 40px 90px -30px #000; transform: scale(0.94); transition: transform 0.4s var(--ease); }
+  #lightbox.open img { transform: none; }
+  #lightbox .lb-cap { position: absolute; bottom: 5vh; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.85); font-size: 0.9rem; }
+  #lightbox .lb-close { position: absolute; top: 4vh; right: 5vw; width: 46px; height: 46px; border: 0; background: rgba(255,255,255,0.12); color: #fff; border-radius: 50%; font-size: 1.4rem; cursor: pointer; transition: transform 0.25s var(--ease), background 0.2s; }
+  #lightbox .lb-close:hover { background: rgba(255,255,255,0.25); transform: rotate(90deg); }
+
+  /* 플로팅 예약 + 맨위로 */
+  .float-actions { position: fixed; right: clamp(14px, 3vw, 28px); bottom: clamp(14px, 3vw, 28px); z-index: 90; display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-end;
+    opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); }
+  .float-actions.show { opacity: 1; transform: none; pointer-events: auto; }
+  .float-book { background: var(--gold); color: #fff !important; font-weight: 700; padding: 0.85rem 1.4rem; border-radius: 999px; box-shadow: 0 12px 30px rgba(168,133,79,0.45); font-size: 0.92rem; transition: transform 0.25s var(--ease), background 0.25s; }
+  .float-book:hover { transform: translateY(-3px); background: var(--gold-deep); }
+  .to-top { width: 46px; height: 46px; border-radius: 50%; background: var(--ocean-800); color: #fff; border: 0; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 24px rgba(12,34,48,0.35); transition: transform 0.25s var(--ease), background 0.25s; align-self: flex-end; }
+  .to-top:hover { transform: translateY(-3px); background: var(--ocean-600); }
+
+  /* 헤딩 단어 단위 등장 */
+  .reveal-group > h2 { opacity: 1; transform: none; }
+  .sec-head h2 .w { display: inline-block; opacity: 0; transform: translateY(0.6em) rotate(2deg); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+  .reveal-group.in h2 .w { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee .track { animation: none; }
+    #loader .ld-brand span { animation: none; transform: none; }
+    #loader .ld-bar i { animation: none; }
+    .sec-head h2 .w { opacity: 1 !important; transform: none !important; }
+  }
+
   /* ───────── PDF/인쇄용 ───────── */
   @media print {
     *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -323,6 +393,18 @@
 </style>
 </head>
 <body>
+
+<!-- 페이지 로더 -->
+<div id="loader"><div style="text-align:center">
+  <div class="ld-brand"><span>백령도 팰리스</span></div>
+  <div class="ld-bar"><i></i></div>
+</div></div>
+
+<!-- 스크롤 진행바 -->
+<div id="progress"></div>
+
+<!-- 커스텀 커서 -->
+<div class="cur-ring"></div><div class="cur-dot"></div>
 
 <!-- ───────── NAV ───────── -->
 <header class="nav" id="nav">
@@ -392,6 +474,14 @@
     </div>
   </div>
 </section>
+
+<!-- ───────── 마퀴 띠 ───────── -->
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    <span>두무진 기암절벽</span><span>콩돌해안</span><span>사곶 천연비행장</span><span>심청각</span><span>서해 최북단</span><span>백령도 팰리스 호텔</span>
+    <span>두무진 기암절벽</span><span>콩돌해안</span><span>사곶 천연비행장</span><span>심청각</span><span>서해 최북단</span><span>백령도 팰리스 호텔</span>
+  </div>
+</div>
 
 <!-- ───────── ROOMS ───────── -->
 <section class="sec" id="rooms">
@@ -517,6 +607,19 @@
   </div>
 </footer>
 
+<!-- 라이트박스 -->
+<div id="lightbox" aria-hidden="true">
+  <button class="lb-close" aria-label="닫기">×</button>
+  <img alt="" />
+  <div class="lb-cap"></div>
+</div>
+
+<!-- 플로팅 예약 / 맨위로 -->
+<div class="float-actions" id="floatActions">
+  <button class="to-top" id="toTop" aria-label="맨 위로">↑</button>
+  <a class="float-book" href="https://booking.naver.com/" target="_blank" rel="noopener">네이버 예약</a>
+</div>
+
 <div class="demo-note">시안(DEMO) · 사진·가격은 예시</div>
 
 <!-- ───────── Kakao Map ─────────
@@ -631,6 +734,93 @@
     }, { threshold: 0.4 });
     sObs.observe(statsEl);
   })();
+
+  // ═══════ 추가 인터랙션 ═══════
+
+  // 페이지 로더 숨김
+  window.addEventListener('load', function () { setTimeout(function () { document.getElementById('loader').classList.add('done'); }, 350); });
+  setTimeout(function () { var l = document.getElementById('loader'); if (l) l.classList.add('done'); }, 2800);
+
+  // 스크롤 진행바 + 플로팅 버튼 노출
+  (function () {
+    var prog = document.getElementById('progress');
+    var fa = document.getElementById('floatActions');
+    function onScrollUI() {
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      var p = max > 0 ? h.scrollTop / max : 0;
+      if (prog) prog.style.width = (p * 100) + '%';
+      if (fa) fa.classList.toggle('show', h.scrollTop > 500);
+    }
+    onScrollUI();
+    window.addEventListener('scroll', onScrollUI, { passive: true });
+    var toTop = document.getElementById('toTop');
+    if (toTop) toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  })();
+
+  // 커스텀 커서 (데스크탑 전용)
+  (function () {
+    var dot = document.querySelector('.cur-dot'), ring = document.querySelector('.cur-ring');
+    if (!dot || !ring || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    document.documentElement.classList.add('has-cursor');
+    var mx = 0, my = 0, rx = 0, ry = 0;
+    window.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
+    }, { passive: true });
+    (function r() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)'; requestAnimationFrame(r); })();
+    document.querySelectorAll('a, button, .bento figure, .room-card').forEach(function (el) {
+      el.addEventListener('mouseenter', function () { ring.classList.add('hot'); });
+      el.addEventListener('mouseleave', function () { ring.classList.remove('hot'); });
+    });
+  })();
+
+  // 헤딩 단어 단위 분리 (스크롤 시 순차 등장)
+  document.querySelectorAll('.sec-head h2').forEach(function (h) {
+    var words = h.textContent.trim().split(/\s+/);
+    h.textContent = '';
+    words.forEach(function (w, i) {
+      var s = document.createElement('span');
+      s.className = 'w'; s.textContent = w;
+      s.style.transitionDelay = (i * 0.07) + 's';
+      h.appendChild(s);
+      if (i < words.length - 1) h.appendChild(document.createTextNode(' '));
+    });
+  });
+
+  // 갤러리 캡션 자동생성 + 라이트박스
+  (function () {
+    var lb = document.getElementById('lightbox');
+    if (!lb) return;
+    var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
+    function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    document.querySelectorAll('.bento figure').forEach(function (fig) {
+      var img = fig.querySelector('img');
+      if (img && img.alt && !fig.querySelector('figcaption')) {
+        var c = document.createElement('figcaption'); c.textContent = img.alt; fig.appendChild(c);
+      }
+      fig.addEventListener('click', function () {
+        if (!img) return;
+        lbImg.src = img.currentSrc || img.src; lbImg.alt = img.alt;
+        lbCap.textContent = img.alt;
+        lb.classList.add('open'); document.body.style.overflow = 'hidden';
+      });
+    });
+    lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('lb-close')) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+
+  // 마그네틱 버튼
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.btn-book, .cta-primary, .cta-ghost, .float-book').forEach(function (b) {
+      b.addEventListener('mousemove', function (e) {
+        var r = b.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2;
+        b.style.transform = 'translate(' + (x * 0.3).toFixed(1) + 'px,' + (y * 0.3).toFixed(1) + 'px)';
+      });
+      b.addEventListener('mouseleave', function () { b.style.transform = ''; });
+    });
+  }
 </script>
 </body>
 </html>
