@@ -306,6 +306,16 @@
   .places-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
   .places-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
   .places-grid .reveal:nth-child(4) { transition-delay: 0.3s; }
+
+  /* 가볼만한 곳 카드 호버 — 이미지 좌→우 패닝(풀 배경 동작) */
+  .places-grid .room-card .ph { overflow: hidden; }
+  .places-grid .room-card .ph img { transition: transform 0.5s var(--ease); }
+  .places-grid .room-card:hover .ph img,
+  .places-grid .room-card:focus-visible .ph img { animation: placePan 5.5s ease-in-out infinite alternate; }
+  @keyframes placePan { from { transform: scale(1.22) translateX(-8%); } to { transform: scale(1.22) translateX(8%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .places-grid .room-card:hover .ph img, .places-grid .room-card:focus-visible .ph img { animation: none; transform: scale(1.06); }
+  }
   .place-more { display: inline-block; margin-top: 0.7rem; font-size: 0.8rem; font-weight: 600; color: var(--gold-deep); transition: transform 0.25s var(--ease); }
   .place-card-btn:hover .place-more { transform: translateX(4px); }
 
